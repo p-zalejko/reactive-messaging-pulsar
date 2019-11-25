@@ -29,19 +29,11 @@ public class PulsarSource {
   }
 
   public void closeQuietly() {
-    CountDownLatch latch = new CountDownLatch(1);
     try {
       source.cancel();
       messageConsumer.close();
     } catch (Throwable e) {
       LOGGER.debug("An exception has been caught while closing the Kafka consumer", e);
-      latch.countDown();
-    }
-
-    try {
-      latch.await();
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
     }
   }
 

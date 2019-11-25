@@ -117,8 +117,10 @@ public class KafkaSourceTest extends KafkaTestBase {
       .build();
 
     ConsumptionBean bean = deploy(myKafkaSourceConfig());
-    List<Integer> list = bean.getResults();
+    List<Object> list = bean.getResults();
+    List<Message<Object>> kafkaMessages = bean.getKafkaMessages();
     assertThat(list).isEmpty();
+    assertThat(kafkaMessages).isEmpty();
 
     Producer<byte[]> producer = pulsarClient.newProducer()
       .topic("data")
@@ -127,7 +129,7 @@ public class KafkaSourceTest extends KafkaTestBase {
     produceTestMessages(producer);
 //
     await().atMost(2, TimeUnit.MINUTES).until(() -> list.size() >= 10);
-    assertThat(list).containsExactly(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+    await().atMost(2, TimeUnit.MINUTES).until(() -> kafkaMessages.size() >= 10);
   }
 
   private void produceTestMessages(Producer<byte[]> producer) {

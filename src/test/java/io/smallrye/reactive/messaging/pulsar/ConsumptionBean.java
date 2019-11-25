@@ -15,7 +15,7 @@ import org.eclipse.microprofile.reactive.messaging.Outgoing;
 @ApplicationScoped
 public class ConsumptionBean {
 
-    private List<Integer> list = new ArrayList<>();
+    private List<Object> list = new ArrayList<>();
     private List<Message<Object>> kafka = new ArrayList<>();
 
     @Incoming("data")
@@ -28,10 +28,10 @@ public class ConsumptionBean {
 
     @Incoming("sinka")
     public void sink(Object val) {
-        list.add(1);
+        list.add(val);
     }
 
-    public List<Integer> getResults() {
+    public List<Object> getResults() {
         return list;
     }
 

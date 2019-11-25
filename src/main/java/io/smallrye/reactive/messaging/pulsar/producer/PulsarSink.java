@@ -28,17 +28,10 @@ public class PulsarSink {
   }
 
   public void closeQuietly() {
-    CountDownLatch latch = new CountDownLatch(1);
     try {
       sender.close();
     } catch (Throwable e) {
       LOGGER.debug("An error has been caught while closing the Kafka Write Stream", e);
-      latch.countDown();
-    }
-    try {
-      latch.await();
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
     }
   }
 
