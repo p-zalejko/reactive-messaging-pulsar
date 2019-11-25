@@ -25,10 +25,14 @@ import io.smallrye.reactive.messaging.pulsar.consumer.PulsarSourceFactory;
 import io.smallrye.reactive.messaging.pulsar.producer.PulsarSink;
 import io.smallrye.reactive.messaging.pulsar.producer.PulsarSinkFactory;
 import io.vertx.reactivex.core.Vertx;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
 @Connector(PulsarConnector.CONNECTOR_NAME)
 public class PulsarConnector implements IncomingConnectorFactory, OutgoingConnectorFactory {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConnector.class);
 
     static final String CONNECTOR_NAME = "smallrye-pulsar";
 
@@ -62,7 +66,7 @@ public class PulsarConnector implements IncomingConnectorFactory, OutgoingConnec
             try {
                 client.close();
             } catch (PulsarClientException e) {
-                e.printStackTrace();
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }

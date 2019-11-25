@@ -9,6 +9,13 @@ import org.apache.pulsar.client.api.PulsarClientException;
 
 import io.smallrye.reactive.messaging.pulsar.PulsarChannelConfig;
 
+import java.util.Objects;
+
+/**
+ * Creates handlers for sink channels.
+ *
+ * @see PulsarSink
+ */
 @Singleton
 public class PulsarSinkFactory {
 
@@ -20,6 +27,9 @@ public class PulsarSinkFactory {
     }
 
     public PulsarSink create(PulsarChannelConfig config, PulsarClient pulsarClient) throws PulsarClientException {
+        Objects.requireNonNull(config);
+        Objects.requireNonNull(pulsarClient);
+
         Producer<byte[]> producer = producerFactory.create(config, pulsarClient);
         return new PulsarSink(producer);
     }

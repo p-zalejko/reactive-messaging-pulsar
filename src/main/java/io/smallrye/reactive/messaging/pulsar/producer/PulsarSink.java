@@ -12,6 +12,9 @@ import org.eclipse.microprofile.reactive.streams.operators.SubscriberBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Handles sink channels, annotated with the {@link org.eclipse.microprofile.reactive.messaging.Outgoing} annotation.
+ */
 public class PulsarSink {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarSink.class);
@@ -19,9 +22,9 @@ public class PulsarSink {
     private final SubscriberBuilder<? extends Message<?>, Void> subscriber;
     private final Producer producer;
 
-    public PulsarSink(Producer producer) {
+    PulsarSink(Producer producer) {
         this.producer = Objects.requireNonNull(producer);
-        this.subscriber = ReactiveStreams.<Message<?>> builder()
+        this.subscriber = ReactiveStreams.<Message<?>>builder()
                 .flatMapCompletionStage(this::send)
                 .onError(t -> LOGGER.error("Unable to dispatch message to Kafka", t))
                 .ignore();
@@ -35,7 +38,7 @@ public class PulsarSink {
         try {
             producer.flush();
             producer.close();
-        } catch (Throwable e) {
+        } catch (Exception e) {
             LOGGER.debug("An error has been caught while closing the Kafka Write Stream", e);
         }
     }

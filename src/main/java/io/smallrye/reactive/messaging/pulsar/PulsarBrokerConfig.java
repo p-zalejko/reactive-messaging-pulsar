@@ -5,6 +5,9 @@ import javax.inject.Singleton;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+/**
+ * Provides broker configuration, e.g. a URL to the pulsar broker.
+ */
 @Singleton
 class PulsarBrokerConfig {
 

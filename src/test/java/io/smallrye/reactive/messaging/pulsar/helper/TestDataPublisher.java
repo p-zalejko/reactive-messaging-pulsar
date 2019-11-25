@@ -3,6 +3,7 @@ package io.smallrye.reactive.messaging.pulsar.helper;
 import static org.assertj.core.api.Assertions.fail;
 
 import java.util.UUID;
+import java.util.stream.IntStream;
 
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.PulsarClient;
@@ -12,15 +13,20 @@ public class TestDataPublisher {
 
     public void produceTestMessages(PulsarClient pulsarClient, String topic, int count) throws PulsarClientException {
         Producer<byte[]> producer = pulsarClient.newProducer()
-                .topic("data")
+                .topic(topic)
                 .create();
 
-        for (int i = 0; i < count; i++) {
-            try {
-                producer.send(UUID.randomUUID().toString().getBytes());
-            } catch (PulsarClientException e) {
-                fail(e.getMessage());
-            }
+        IntStream.range(0, count)
+                .mapToObj(i -> UUID.randomUUID().toString().getBytes())
+                .forEach(bytes -> send(producer, bytes));
+    }
+
+    private void send(Producer<byte[]> producer, byte[] bytes) {
+        try {
+            producer.send(bytes);
+        } catch (PulsarClientException e) {
+            fail(e.getMessage());
         }
     }
+
 }

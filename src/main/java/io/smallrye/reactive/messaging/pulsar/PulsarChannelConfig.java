@@ -4,6 +4,9 @@ import java.util.Objects;
 
 import org.eclipse.microprofile.config.Config;
 
+/**
+ * Provides configuration parameters for channels (input and output).
+ */
 public class PulsarChannelConfig {
 
     private final Config config;

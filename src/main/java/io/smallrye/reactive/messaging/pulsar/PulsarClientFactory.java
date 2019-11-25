@@ -8,6 +8,9 @@ import javax.inject.Singleton;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
 
+/**
+ * Creates a {@link PulsarClient} relying on the configuration parameters provided by {@link PulsarBrokerConfig}.
+ */
 @Singleton
 @Default
 class PulsarClientFactory {

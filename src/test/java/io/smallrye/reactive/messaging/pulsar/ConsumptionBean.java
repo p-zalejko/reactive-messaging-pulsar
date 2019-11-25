@@ -20,7 +20,7 @@ public class ConsumptionBean {
     //    @Acknowledgment(Acknowledgment.Strategy.MANUAL)
     public Message process(Message<Object> input) {
         dataTopicMessages.add(input);
-        return Message.of("input.getPayload() + 1");
+        return Message.of(input.getPayload());
     }
 
     @Incoming("sinkIn")
