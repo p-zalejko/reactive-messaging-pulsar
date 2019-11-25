@@ -1,18 +1,22 @@
 package io.smallrye.reactive.messaging.pulsar;
 
-import org.apache.pulsar.client.api.PulsarClient;
-import org.apache.pulsar.client.api.PulsarClientException;
+import java.util.Objects;
 
 import javax.enterprise.inject.Default;
 import javax.inject.Singleton;
+
+import org.apache.pulsar.client.api.PulsarClient;
+import org.apache.pulsar.client.api.PulsarClientException;
 
 @Singleton
 @Default
 class PulsarClientFactory {
 
-  PulsarClient createClient(String servers) throws PulsarClientException {
-    return PulsarClient.builder()
-      .serviceUrl(servers)
-      .build();
-  }
+    PulsarClient createClient(PulsarBrokerConfig config) throws PulsarClientException {
+        Objects.requireNonNull(config);
+
+        return PulsarClient.builder()
+                .serviceUrl(config.getServers())
+                .build();
+    }
 }

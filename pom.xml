@@ -12,8 +12,8 @@
 
   <properties>
     <kafka.version>2.3.1</kafka.version>
-    <debezium.version>0.10.0.Final</debezium.version>
     <pulsar.version>2.4.1</pulsar.version>
+    <pulsar-testcontainers.version>1.12.3</pulsar-testcontainers.version>
   </properties>
 
   <dependencies>
@@ -34,31 +34,10 @@
       <version>${pulsar.version}</version>
     </dependency>
 
-
-    <dependency>
-      <groupId>javax.annotation</groupId>
-      <artifactId>javax.annotation-api</artifactId>
-      <version>1.3.2</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>io.debezium</groupId>
-      <artifactId>debezium-core</artifactId>
-      <version>${debezium.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.debezium</groupId>
-      <artifactId>debezium-core</artifactId>
-      <version>${debezium.version}</version>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>pulsar</artifactId>
-      <version>1.12.3</version>
+      <version>${pulsar-testcontainers.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -79,22 +58,5 @@
       </plugin>
     </plugins>
   </build>
-
-  <profiles>
-    <profile>
-      <id>coverage</id>
-      <properties>
-        <argLine>@{jacocoArgLine}</argLine>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.jacoco</groupId>
-            <artifactId>jacoco-maven-plugin</artifactId>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 
 </project>

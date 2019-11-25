@@ -1,4 +1,4 @@
-package io.smallrye.reactive.messaging.pulsar;
+package io.smallrye.reactive.messaging.pulsar.helper;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -51,7 +51,7 @@ public class MapBasedConfig implements Config {
         return Collections.emptyList();
     }
 
-    void write() {
+    public void write() {
         File out = new File("target/test-classes/META-INF/microprofile-config.properties");
         if (out.isFile()) {
             out.delete();
