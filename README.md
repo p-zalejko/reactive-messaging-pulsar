@@ -1,4 +1,4 @@
-# reactive messaging pulsar
+# reactive messaging pulsar (not ready yet!)
 
 A PoC implementation of the reactive messaging specification for Apache Pulsar. The implementation depends on SmallRye Reactive Messaging.
 
