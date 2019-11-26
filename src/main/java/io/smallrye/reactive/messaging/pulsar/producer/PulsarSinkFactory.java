@@ -1,5 +1,7 @@
 package io.smallrye.reactive.messaging.pulsar.producer;
 
+import java.util.Objects;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -8,8 +10,6 @@ import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
 
 import io.smallrye.reactive.messaging.pulsar.PulsarChannelConfig;
-
-import java.util.Objects;
 
 /**
  * Creates handlers for sink channels.

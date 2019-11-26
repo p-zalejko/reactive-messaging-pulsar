@@ -24,9 +24,9 @@ public class PulsarSink {
 
     PulsarSink(Producer producer) {
         this.producer = Objects.requireNonNull(producer);
-        this.subscriber = ReactiveStreams.<Message<?>>builder()
+        this.subscriber = ReactiveStreams.<Message<?>> builder()
                 .flatMapCompletionStage(this::send)
-                .onError(t -> LOGGER.error("Unable to dispatch message to Kafka", t))
+                .onError(t -> LOGGER.error("Unable to dispatch message", t))
                 .ignore();
     }
 
@@ -39,17 +39,18 @@ public class PulsarSink {
             producer.flush();
             producer.close();
         } catch (Exception e) {
-            LOGGER.debug("An error has been caught while closing the Kafka Write Stream", e);
+            LOGGER.debug("An error has been caught while closing the Write Stream", e);
         }
     }
 
     private CompletableFuture<Message> send(Message message) {
         if (producer.isConnected()) {
             try {
+                //TODO: add serializer to bytes
                 MessageId send = producer.send("foo".getBytes());
                 return CompletableFuture.completedFuture(message);
             } catch (RuntimeException | PulsarClientException e) {
-                LOGGER.error("Unable to send a record to Kafka ", e);
+                LOGGER.error("Unable to send a record ", e);
                 return CompletableFuture.completedFuture(message);
             }
         } else {

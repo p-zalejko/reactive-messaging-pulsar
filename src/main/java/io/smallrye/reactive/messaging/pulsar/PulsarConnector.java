@@ -19,14 +19,14 @@ import org.eclipse.microprofile.reactive.messaging.spi.IncomingConnectorFactory;
 import org.eclipse.microprofile.reactive.messaging.spi.OutgoingConnectorFactory;
 import org.eclipse.microprofile.reactive.streams.operators.PublisherBuilder;
 import org.eclipse.microprofile.reactive.streams.operators.SubscriberBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.smallrye.reactive.messaging.pulsar.consumer.PulsarSource;
 import io.smallrye.reactive.messaging.pulsar.consumer.PulsarSourceFactory;
 import io.smallrye.reactive.messaging.pulsar.producer.PulsarSink;
 import io.smallrye.reactive.messaging.pulsar.producer.PulsarSinkFactory;
 import io.vertx.reactivex.core.Vertx;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
 @Connector(PulsarConnector.CONNECTOR_NAME)

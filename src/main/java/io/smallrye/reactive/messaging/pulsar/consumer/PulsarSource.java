@@ -50,7 +50,7 @@ public class PulsarSource {
 
             consumer.close();
         } catch (Exception e) {
-            LOGGER.error("An exception has been caught while closing the Kafka consumer", e);
+            LOGGER.error("An exception has been caught while closing the consumer", e);
         }
     }
 
@@ -63,7 +63,8 @@ public class PulsarSource {
         });
     }
 
-    private void handleNewMessage(Consumer<Object> subscribe, FlowableEmitter subject, org.apache.pulsar.client.api.Message<Object> msg) {
+    private void handleNewMessage(Consumer<Object> subscribe, FlowableEmitter subject,
+            org.apache.pulsar.client.api.Message<Object> msg) {
         if (subscribe.isConnected()) {
             try {
                 subject.onNext(org.eclipse.microprofile.reactive.messaging.Message.of(msg));
