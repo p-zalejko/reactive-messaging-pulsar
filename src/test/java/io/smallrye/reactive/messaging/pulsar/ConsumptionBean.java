@@ -13,22 +13,23 @@ import org.eclipse.microprofile.reactive.messaging.Outgoing;
 public class ConsumptionBean {
 
     private List<Object> sinkTopicMessages = new ArrayList<>();
-    private List<Message<Object>> dataTopicMessages = new ArrayList<>();
+    private List<Message<?>> dataTopicMessages = new ArrayList<>();
 
     @Incoming("data")
     @Outgoing("sinkOut")
     //    @Acknowledgment(Acknowledgment.Strategy.MANUAL)
-    public Message process(Message<Object> input) {
+    public Message process(Message<byte[]> input) {
+        byte[] payload = input.getPayload();
         dataTopicMessages.add(input);
-        return Message.of(input.getPayload());
+        return Message.of(payload);
     }
 
     @Incoming("sinkIn")
-    public void sink(Object val) {
+    public void sink(byte[] val) {
         sinkTopicMessages.add(val);
     }
 
-    List<Message<Object>> getDataTopicMessages() {
+    List<Message<?>> getDataTopicMessages() {
         return dataTopicMessages;
     }
 

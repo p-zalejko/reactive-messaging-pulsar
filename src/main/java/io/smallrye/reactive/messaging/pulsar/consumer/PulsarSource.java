@@ -6,7 +6,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.pulsar.client.api.Consumer;
-import org.apache.pulsar.client.api.PulsarClientException;
 import org.eclipse.microprofile.reactive.messaging.Message;
 import org.eclipse.microprofile.reactive.streams.operators.PublisherBuilder;
 import org.eclipse.microprofile.reactive.streams.operators.ReactiveStreams;
@@ -33,7 +32,8 @@ public class PulsarSource {
         this.consumer = Objects.requireNonNull(consumer);
         this.executor = Objects.requireNonNull(executor);
 
-        Flowable flowable = Flowable.create(emitter -> receiveNext(consumer, emitter), BackpressureStrategy.BUFFER);
+        Flowable<? extends Message<?>> flowable = Flowable.create(emitter -> receiveNext(consumer, emitter),
+                BackpressureStrategy.BUFFER);
         this.source = ReactiveStreams.fromPublisher(flowable);
     }
 
@@ -67,9 +67,9 @@ public class PulsarSource {
             org.apache.pulsar.client.api.Message<Object> msg) {
         if (subscribe.isConnected()) {
             try {
-                subject.onNext(org.eclipse.microprofile.reactive.messaging.Message.of(msg));
+                subject.onNext(org.eclipse.microprofile.reactive.messaging.Message.of(msg.getValue()));
                 subscribe.acknowledge(msg);
-            } catch (PulsarClientException e) {
+            } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }
 

@@ -3,9 +3,7 @@ package io.smallrye.reactive.messaging.pulsar.producer;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
-import org.apache.pulsar.client.api.MessageId;
 import org.apache.pulsar.client.api.Producer;
-import org.apache.pulsar.client.api.PulsarClientException;
 import org.eclipse.microprofile.reactive.messaging.Message;
 import org.eclipse.microprofile.reactive.streams.operators.ReactiveStreams;
 import org.eclipse.microprofile.reactive.streams.operators.SubscriberBuilder;
@@ -22,7 +20,7 @@ public class PulsarSink {
     private final SubscriberBuilder<? extends Message<?>, Void> subscriber;
     private final Producer producer;
 
-    PulsarSink(Producer producer) {
+    PulsarSink(Producer<?> producer) {
         this.producer = Objects.requireNonNull(producer);
         this.subscriber = ReactiveStreams.<Message<?>> builder()
                 .flatMapCompletionStage(this::send)
@@ -46,12 +44,11 @@ public class PulsarSink {
     private CompletableFuture<Message> send(Message message) {
         if (producer.isConnected()) {
             try {
-                //TODO: add serializer to bytes
-                MessageId send = producer.send("foo".getBytes());
+                producer.send(message.getPayload());
                 return CompletableFuture.completedFuture(message);
-            } catch (RuntimeException | PulsarClientException e) {
-                LOGGER.error("Unable to send a record ", e);
-                return CompletableFuture.completedFuture(message);
+            } catch (Exception e) {
+                LOGGER.error("Unable to send a record", e);
+                return CompletableFuture.completedFuture(null);
             }
         } else {
             LOGGER.warn("Message has not been sent. Producer is already disconnected");

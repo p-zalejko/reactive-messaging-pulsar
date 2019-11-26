@@ -30,7 +30,7 @@ public class PulsarSinkFactory {
         Objects.requireNonNull(config);
         Objects.requireNonNull(pulsarClient);
 
-        Producer<byte[]> producer = producerFactory.create(config, pulsarClient);
+        Producer<?> producer = producerFactory.create(config, pulsarClient);
         return new PulsarSink(producer);
     }
 }
