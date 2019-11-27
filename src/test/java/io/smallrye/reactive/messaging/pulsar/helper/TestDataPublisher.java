@@ -2,7 +2,6 @@ package io.smallrye.reactive.messaging.pulsar.helper;
 
 import static org.assertj.core.api.Assertions.fail;
 
-import java.util.UUID;
 import java.util.stream.IntStream;
 
 import org.apache.pulsar.client.api.Producer;
@@ -17,7 +16,7 @@ public class TestDataPublisher {
                 .create();
 
         IntStream.range(0, count)
-                .mapToObj(i -> UUID.randomUUID().toString().getBytes())
+                .mapToObj(i -> new byte[] { (byte) i })
                 .forEach(bytes -> send(producer, bytes));
     }
 

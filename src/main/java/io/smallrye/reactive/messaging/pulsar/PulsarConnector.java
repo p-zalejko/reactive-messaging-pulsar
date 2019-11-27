@@ -34,7 +34,7 @@ public class PulsarConnector implements IncomingConnectorFactory, OutgoingConnec
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConnector.class);
 
-    static final String CONNECTOR_NAME = "smallrye-pulsar";
+    public static final String CONNECTOR_NAME = "smallrye-pulsar";
 
     @Inject
     private Instance<Vertx> instanceOfVertx;

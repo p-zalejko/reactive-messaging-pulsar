@@ -1,11 +1,16 @@
 package io.smallrye.reactive.messaging.pulsar;
 
+import org.apache.pulsar.client.api.PulsarClient;
+import org.apache.pulsar.client.api.PulsarClientException;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.jboss.weld.environment.se.Weld;
+import org.jboss.weld.environment.se.WeldContainer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.testcontainers.containers.PulsarContainer;
 
+import io.smallrye.config.SmallRyeConfigProviderResolver;
 import io.smallrye.config.inject.ConfigExtension;
 import io.smallrye.reactive.messaging.MediatorFactory;
 import io.smallrye.reactive.messaging.extension.ChannelProducer;
@@ -13,8 +18,12 @@ import io.smallrye.reactive.messaging.extension.MediatorManager;
 import io.smallrye.reactive.messaging.extension.ReactiveMessagingExtension;
 import io.smallrye.reactive.messaging.impl.ConfiguredChannelFactory;
 import io.smallrye.reactive.messaging.impl.InternalChannelRegistry;
+import io.smallrye.reactive.messaging.pulsar.consumer.ConsumerFactory;
+import io.smallrye.reactive.messaging.pulsar.consumer.PulsarSourceFactory;
 import io.smallrye.reactive.messaging.pulsar.helper.MapBasedConfig;
 import io.smallrye.reactive.messaging.pulsar.helper.TestDataPublisher;
+import io.smallrye.reactive.messaging.pulsar.producer.ProducerFactory;
+import io.smallrye.reactive.messaging.pulsar.producer.PulsarSinkFactory;
 import io.vertx.reactivex.core.Vertx;
 
 public class PulsarBase {
@@ -24,16 +33,30 @@ public class PulsarBase {
 
     Vertx vertx;
     TestDataPublisher testDataPublisher;
+    WeldContainer container;
+    String pulsarBrokerUrl;
+    PulsarClient pulsarClient;
 
     @Before
-    public void setup() {
+    public void setup() throws PulsarClientException {
         vertx = Vertx.vertx();
         testDataPublisher = new TestDataPublisher();
+
+        pulsarBrokerUrl = pulsarContainer.getPulsarBrokerUrl(); // "pulsar://localhost:6650";
+        pulsarClient = PulsarClient.builder()
+                .serviceUrl(pulsarBrokerUrl)
+                .build();
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws PulsarClientException {
         vertx.close();
+        if (container != null) {
+            container.close();
+        }
+        // Release the config objects
+        SmallRyeConfigProviderResolver.instance().releaseConfig(ConfigProvider.getConfig());
+        pulsarClient.close();
     }
 
     static Weld baseWeld() {
@@ -61,5 +84,20 @@ public class PulsarBase {
         } else {
             MapBasedConfig.clear();
         }
+    }
+
+    <T> T deploy(MapBasedConfig config, Class<T> clazz) {
+        Weld weld = baseWeld();
+        addConfig(config);
+        weld.addBeanClass(clazz);
+        weld.addBeanClass(PulsarClientFactory.class);
+        weld.addBeanClass(PulsarSourceFactory.class);
+        weld.addBeanClass(PulsarSinkFactory.class);
+        weld.addBeanClass(ConsumerFactory.class);
+        weld.addBeanClass(ProducerFactory.class);
+        weld.addBeanClass(PulsarBrokerConfig.class);
+        weld.disableDiscovery();
+        container = weld.initialize();
+        return container.getBeanManager().createInstance().select(clazz).get();
     }
 }
