@@ -14,6 +14,7 @@ import org.junit.Test;
 import io.smallrye.reactive.messaging.pulsar.consumer.ConsumptionBytesBean;
 import io.smallrye.reactive.messaging.pulsar.consumer.ConsumptionBytesToStringBean;
 import io.smallrye.reactive.messaging.pulsar.consumer.ConsumptionBytesToStringWithEmitterBean;
+import io.smallrye.reactive.messaging.pulsar.consumer.ConsumptionBytesToStringWithPublisherBean;
 import io.smallrye.reactive.messaging.pulsar.helper.ConfigHelper;
 import io.smallrye.reactive.messaging.pulsar.helper.MapBasedConfig;
 
@@ -58,4 +59,15 @@ public class EndToEndPulsarTest extends PulsarBase {
         await().atMost(2, TimeUnit.MINUTES).until(() -> bean.getSinkTopicMessages().size() >= count);
     }
 
+    @Test
+    public void test_publisher() throws PulsarClientException {
+        MapBasedConfig config = ConfigHelper.getConfig(pulsarBrokerUrl, BytesSchema.class, StringSchema.class);
+        ConsumptionBytesToStringWithPublisherBean bean = deploy(config, ConsumptionBytesToStringWithPublisherBean.class);
+        assertThat(bean.getSinkTopicMessages()).isEmpty();
+
+        int count = 10;
+        IntStream.range(0, count).forEach(bean::sendMessage);
+
+        await().atMost(2, TimeUnit.MINUTES).until(() -> bean.getSinkTopicMessages().size() >= count);
+    }
 }
